@@ -175,10 +175,10 @@ def plot(events, df, cycle, outdir=''):
 def setup(path, cycle, event_df):
   events = event_df[event_df['cycle']==cycle]
   print events
+  print len(events)
+  num_events = len(events)-1
   start_time_pc = events.iloc[0]['host_time']
-  rf_on_time_pc = events.iloc[2]['host_time']
-  spp_time_pc = events.iloc[3]['host_time']
-  end_time_pc = events.iloc[5]['host_time']
+  end_time_pc = events.iloc[num_events]['host_time']
   outfile = select_from_json(path, cycle, start_time_pc, end_time_pc)
   hdf5ify(outfile)
   if os.path.isfile(outfile + '.hdf5'):
@@ -186,9 +186,14 @@ def setup(path, cycle, event_df):
     return (events, dfcycle)
   else:
     return (None, None)
-outdir = '/tmpdata/rf-on-off/LJ23/20170925-174559-lj23-t2-d12h-f1-SPS-RFOnOff-1-5s'
-event_df = pd.DataFrame(pp_gtt_events(outdir))
-for cycle in range(1,1000):
-  (events, df) = setup(outdir, cycle, event_df)
+
+
+indir = '/Volumes/data/data/PiksiMultiTesting/2017-09/27-v1.2.5-initial-test-GLO-10hz/LJ12/20170927-152910-lj12-t2-d24h-f4-RTK-RFOnOff-1-5s'
+event_df = pd.DataFrame(pp_gtt_events(indir))
+outdir = os.path.join(indir, 'figures')
+if not os.path.isdir(outdir):
+  os.mkdir(outdir)
+for cycle in range(1,2000):
+  (events, df) = setup(indir, cycle, event_df)
   plot(events,df,cycle,outdir)
 

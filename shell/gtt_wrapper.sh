@@ -1,7 +1,8 @@
 #!/bin/bash
 set -x
 # first arg is a folder
-for D1 in `find $1 -type d -name "LJ*"`
+#for D1 in `find $1 -type d -name "DUT*"`
+for D1 in `find $1 -type d -name "DUT*"`
  do
   echo "directory is $D1"
   notnavcsv=$(find $D1 -name rf-on-off.csv -o -name starts.csv -o -name corr-on-off.csv)
@@ -11,7 +12,7 @@ for D1 in `find $1 -type d -name "LJ*"`
      do
        PYTHONPATH=. python-plotting/gtt_upload.py -m -n -p $file &
        done
-  else
+   fi
    navcsv=$(find $D1 -name nav.csv)
    if [[ ! -z $navcsv ]]; then
      echo "running nav test on $navcsv"
@@ -20,7 +21,6 @@ for D1 in `find $1 -type d -name "LJ*"`
        PYTHONPATH=. python-plotting/gtt_upload.py -m -p $file &
        done
    fi
-  fi
 done
 # for each subfolder, traverse down tree until a csv file is found
 
