@@ -194,9 +194,7 @@ class CellModemTestState(TestState):
                     write_retries=20, confirm_retries=20)
             except RuntimeError as e:
                 print(e)
-                self.log_state_trans(9)
-                self.handler.stop()
-                sys.exit(-1)
+                self.log_state_trans('SETTINGS_FAIL')
                 self.reboot_and_log()
                 # settings write successful
             self.settings_done = True
