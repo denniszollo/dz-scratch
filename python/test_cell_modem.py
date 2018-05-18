@@ -131,7 +131,7 @@ class CellModemTestState(TestState):
          ('SN'            , 'Received Modem Serial Number'),
          ('SETTINGS_START', 'Cell Modem Settings Write Attempt'),
          ('SETTINGS_DONE' , 'Cell Modem Settings Write Success'),
-         ('AT_START'      , 'One AT command resp'),
+         ('AT_ATTEMPT'    , 'One AT command resp'),
          ('AT_SUCCESS'    , 'Cell Modem HDW success'),
          ('CONNECT_FAIL'  , 'Cell Modem connect fail'),
          ('NAP_FAIL'      , 'Nap verification failed'),
@@ -185,7 +185,7 @@ class CellModemTestState(TestState):
             try:
                 settings.write("cell_modem", "debug", "True", verbose=True,
                         write_retries=20, confirm_retries=20)
-                if settings.read("cell_modem", "enable", retries=20, verbose=True):
+                if settings.read("cell_modem", "enable", retries=20, verbose=True).lower() == "true":
                     print("Cell modem already enabled; toggling setting.")
                     settings.write("cell_modem", "enable", "False", verbose=True,
                         write_retries=20, confirm_retries=20)
