@@ -196,6 +196,7 @@ class CellModemTestState(TestState):
                 print(e)
                 self.log_state_trans('SETTINGS_FAIL')
                 self.reboot_and_log()
+                return
                 # settings write successful
             self.settings_done = True
             self.log_state_trans('SETTINGS_DONE')
