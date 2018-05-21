@@ -40,7 +40,10 @@ class LoopTimer(object):
         It sets up another timer to call itself again in the future.
         """
         self.hfunction()
+        if self.thread is not None:
+            self.thread.cancel()
         self.thread = threading.Timer(self.interval, self.handle_function)
+        print("calling start from handle function")
         self.start()
 
     def start(self):
@@ -189,7 +192,7 @@ class CellModemTestState(TestState):
                     print("Cell modem already enabled; toggling setting.")
                     settings.write("cell_modem", "enable", "False", verbose=True,
                         write_retries=20, confirm_retries=20)
-                    time.sleep(10)
+                    time.sleep(1)
                 settings.write("cell_modem", "enable", "True", verbose=True,
                     write_retries=20, confirm_retries=20)
             except RuntimeError as e:
@@ -223,7 +226,7 @@ class CellModemTestState(TestState):
             if self.state == 'SN':
                 threading.Thread(target=self.do_settings).start()
                 self.log_state_trans('SETTINGS_START')
-            if self.state_within('SETTINGS_START', 'SETTINGS_DONE'):
+            if self.state_within('SETTINGS_START', 'SETTINGS_DONE') or self.state == "CONNECT_FAIL":
                 if msg.text.find("OK") != -1:
                     self.log_state_trans('AT_ATTEMPT')
             if self.state == 'AT_ATTEMPT':
@@ -262,7 +265,13 @@ class CellModemTestState(TestState):
         """
         print "Hit interval timer after {0} seconds".format(time.time() - self.reset_time)
         self.log_state_trans('TIMEOUT')
-        self.reboot_and_log()
+        if self.state_dict:
+            self.log_state_dict()
+        self.clear_state()
+        self.reset_time = time.time()
+        self.handler(MsgReset(flags=0))
+        time.sleep(0.25)
+        
 
 def get_args():
     """
@@ -315,7 +324,6 @@ def main():
                     # add Teststates and associated callbacks
                     with CellModemTestState(link, interval, filename=args.outfile,
                                             commanded_cycles=int(args.cycles)) as cell:
-                        cell.timer.thread.join()
 
                         if timeout is not None:
                             expire = time.time() + float(args.timeout)
