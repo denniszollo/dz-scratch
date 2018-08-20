@@ -15,6 +15,9 @@ MSGS_TO_FILTER = [521, #MsgPosECEF
                   533  #MsgVelECEFCov
                   ]
  
+
+MSGS_TO_FILTER = [522]
+
 def main():
   filepath = sys.argv[1]
 
