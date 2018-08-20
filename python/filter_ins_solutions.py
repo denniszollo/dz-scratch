@@ -4,9 +4,17 @@ import json
 from pprint import pprint
 from sbp.navigation import MsgPosLLH, MsgVelNED
 import math
-
-MSGS_TO_FILTER = [522]
-
+                  
+MSGS_TO_FILTER = [521, #MsgPosECEF
+                  522, #MsgPosLLH
+                  525, #MsgVelECEF
+                  526, #MsgVelNED
+                  529, #MsgPosLLHCov
+                  530, #MsgVelNEDCov
+                  532, #MsgPosECEFCov
+                  533  #MsgVelECEFCov
+                  ]
+ 
 def main():
   filepath = sys.argv[1]
 
