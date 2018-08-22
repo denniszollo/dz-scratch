@@ -4,13 +4,13 @@ var SbpMsgTable = [
 {"257":
 {msgName: "MSG_EXT_EVENT", 
 msgLen: "12",
-pkg: "",
+pkg: "Ext_Events",
 shortDesc:"Reports timestamped external pin event",
 longDesc:"Reports detection of an external event, the GPS time it occurred, which pin it was and whether it was rising or falling. "}},
 {"2304":
 {msgName: "MSG_IMU_RAW", 
 msgLen: "17",
-pkg: "",
+pkg: "Imu",
 shortDesc:"Raw IMU data",
 longDesc:"Raw data from the Inertial Measurement Unit, containing accelerometer and gyroscope readings. The sense of the measurements are to be aligned with  the indications on the device itself. "}},
 {"2305":
@@ -22,7 +22,7 @@ longDesc:"Auxiliary data specific to a particular IMU. The `imu\_type` field wil
 {"1025":
 {msgName: "MSG_LOG", 
 msgLen: "N+1",
-pkg: "",
+pkg: "Logging",
 shortDesc:"Plaintext logging messages with levels",
 longDesc:"This message contains a human-readable payload string from the device containing errors, warnings and informational messages at ERROR, WARNING, DEBUG, INFO logging levels. "}},
 {"1026":
@@ -34,13 +34,13 @@ longDesc:"This message provides the ability to forward messages over SBP.  This 
 {"2306":
 {msgName: "MSG_MAG_RAW", 
 msgLen: "11",
-pkg: "",
+pkg: "Mag",
 shortDesc:"Raw magnetometer data",
 longDesc:"Raw data from the magnetometer. "}},
 {"258":
 {msgName: "MSG_GPS_TIME", 
 msgLen: "11",
-pkg: "",
+pkg: "Navigation",
 shortDesc:"GPS Time",
 longDesc:"This message reports the GPS time, representing the time since the GPS epoch began on midnight January 6, 1980 UTC. GPS time counts the weeks and seconds of the week. The weeks begin at the Saturday/Sunday transition. GPS week 0 began at the beginning of the GPS time scale.\\nWithin each week number, the GPS time of the week is between between 0 and 604800 seconds (=60*60*24*7). Note that GPS time does not accumulate leap seconds, and as of now, has a small offset from UTC. In a message stream, this message precedes a set of other navigation messages referenced to the same time (but lacking the ns field) and indicates a more precise time of these messages. "}},
 {"259":
@@ -130,7 +130,7 @@ longDesc:"This message reports the Age of the corrections used for the current D
 {"74":
 {msgName: "MSG_OBS", 
 msgLen: "17N+11",
-pkg: "",
+pkg: "Observation",
 shortDesc:"GPS satellite observations",
 longDesc:"The GPS observations message reports all the raw pseudorange and carrier phase observations for the satellites being tracked by the device. Carrier phase observation here is represented as a 40-bit fixed point number with Q32.8 layout (i.e. 32-bits of whole cycles and 8-bits of fractional cycles). The observations are be interoperable with 3rd party receivers and conform with typical RTCMv3 GNSS observations. "}},
 {"68":
@@ -280,7 +280,7 @@ longDesc:"The GLONASS L1/L2 Code-Phase biases allows to perform GPS+GLONASS inte
 {"161":
 {msgName: "MSG_SETTINGS_SAVE", 
 msgLen: "0",
-pkg: "",
+pkg: "Settings",
 shortDesc:"Save settings to flash (host => device)",
 longDesc:"The save settings message persists the device's current settings configuration to its onboard flash memory file system. "}},
 {"160":
@@ -328,7 +328,7 @@ longDesc:"The settings message for indicating end of the settings values. "}},
 {"65280":
 {msgName: "MSG_STARTUP", 
 msgLen: "4",
-pkg: "",
+pkg: "System",
 shortDesc:"System start-up message",
 longDesc:"The system start-up message is sent once on system start-up. It notifies the host or other attached devices that the system has started and is now ready to respond to commands or configuration requests. "}},
 {"65282":
