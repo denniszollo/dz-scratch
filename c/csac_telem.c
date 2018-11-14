@@ -46,21 +46,20 @@ read_until_cr_lf(int fd, char *outbuf, size_t maxlen)
 int
 main(void)
 {
-	if (DEBUG)
-		printf("running");
-	int		cycle = 0;	/* cycle_offset for quering column
-					 * names */
-	char		buffer    [255];	/* Input buffer */
-	memset(buffer, 0, 255);
-	struct termios	old_termios;
-	struct termios	new_termios;
-	fd = open(dev, O_RDWR | O_NOCTTY | O_NDELAY);
-	if (DEBUG)
-		printf("open");
-	fflush(stdout);
-	if (fd < 0) {
-		fprintf(stderr, "error, counldn't open file %s\n", dev);
-		return 1;
+  if (DEBUG)
+    printf("running");
+  intcycle = 0;     /* cycle_offset for quering column names */
+  char buffer[255]; /* Input buffer */
+  memset(buffer, 0, 255);
+  struct termios old_termios;
+  struct termios new_termios;
+  fd = open(dev, O_RDWR | O_NOCTTY | O_NDELAY);
+  if (DEBUG)
+    printf("open");
+  fflush(stdout);
+  if (fd < 0) {
+    fprintf(stderr, "error, counldn't open file %s\n", dev);
+    return 1;
 	}
 	if (tcgetattr(fd, &old_termios) != 0) {
 		fprintf(stderr, "tcgetattr(fd, &old_termios) failed: %s\n", strerror(errno));
@@ -100,61 +99,58 @@ main(void)
 		fprintf(stderr, "tcsetattr(fd, TCSANOW, &new_termios) failed: %s\n", strerror(errno));
 		return 1;
 	}
-	if (DEBUG)
-		printf("before while");
-	while (1) {
-		if (DEBUG)
-			printf("while");
-		fflush(stdout);
-		int		tries;	/* Number of tries so far */
-		if (cycle == 0) {
-			cycle++;
-			for (tries = 0; tries < 10; tries++) {
-				if (DEBUG)
-					printf("trying");
-				memset(buffer, 0, 255);
-				/* send an AT command followed by a CR */
-				if (DEBUG)
-					printf("writing");
-				if (write(fd, "6\r\n", 3) < 3) {
-					fprintf(stderr, "less than 3 bytes written\n");
-					continue;
-				}
-				usleep(100000);
-				/*
-				 * read characters into our string buffer
-				 * until we get a CR or NL
-				 */
-				int		bytes = read_until_cr_lf(fd, buffer, 255);
-				if (DEBUG)
-					printf("read %d bytes\n", bytes);
-				if (DEBUG)
-					printf("%c %c %c : %c %c %c\n", buffer[0], buffer[1], buffer[2], buffer[bytes - 3], buffer[bytes - 4], buffer[bytes - 5]);
-				if (bytes > 50) {
-					if (buffer[0] == 'S' && buffer[bytes - 3] == 'r')
-						if (DEBUG)
-							printf("breaking");
-					printf("%s,%s", "cycle,time,", buffer);
-					break;
-				}
-			}
-		}
-		for (tries = 0; tries < 3; tries++) {
-			/* send an AT command followed by a CR */
-			if (write(fd, "^\r\n", 3) < 3) {
-				fprintf(stderr, "less than 3 bytes written\n");
-				continue;
-			}
-			usleep(100000);
-			/*
-			 * read characters into our string buffer until we
-			 * get a CR or NL
-			 */
-			int		bytes = read_until_cr_lf(fd, buffer, 255);
-			if (bytes > 50)
-				printf("%d,%ld,%s", cycle, time(NULL), buffer);
-			break;
-		}
-		usleep(990000);
-	}
+        if (DEBUG)
+          printf("before while");
+        while (1) {
+          if (DEBUG)
+            printf("while");
+          fflush(stdout);
+          int tries; /* Number of tries so far */
+          if (cycle == 0) {
+            cycle++;
+            for (tries = 0; tries < 10; tries++) {
+              if (DEBUG)
+                printf("trying headers %d", tries);
+              memset(buffer, 0, 255);
+              /* send an AT command followed by a CR */
+              if (write(fd, "6\r\n", 3) < 3) {
+                fprintf(stderr, "less than 3 bytes written\n");
+                continue;
+              }
+              usleep(100000); /* 10 ms */
+              /*
+               * read characters into our string buffer
+               * until we get a CR or NL
+               */
+              int bytes = read_until_cr_lf(fd, buffer, 255);
+              if (DEBUG)
+                printf("read %d bytes\n", bytes);
+              if (DEBUG)
+                printf("%c %c %c : %c %c %c\n", buffer[0], buffer[1], buffer[2],
+                       buffer[bytes - 3], buffer[bytes - 4], buffer[bytes - 5]);
+              if (bytes > 50) {
+                if (buffer[0] == 'S' &&
+                    buffer[bytes - 3] == 'r') /* Check first and last characters
+                                                 which are known */
+                {
+                  printf("%s,%s", "cycle,time,", buffer);
+                }
+                break;
+              }
+            }
+          }
+          for (tries = 0; tries < 3; tries++) {
+            /* send an AT command followed by a CR */
+            if (write(fd, "^\r\n", 3) < 3) {
+              fprintf(stderr, "less than 3 bytes written\n");
+              continue;
+            }
+            usleep(100000);
+            int bytes = read_until_cr_lf(fd, buffer, 255);
+            if (bytes > 50)
+              printf("%d,%ld,%s", cycle, time(NULL), buffer);
+            break;
+          }
+          usleep(990000); /* 990 ms */
+        }
 }
