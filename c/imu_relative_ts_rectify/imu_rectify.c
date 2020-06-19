@@ -4,6 +4,7 @@
 #include <math.h>
 
 #include "libsbp/navigation.h"
+#include "libsbp/observation.h"
 #include "libsbp/vehicle.h"
 #include "libsbp/sbp.h"
 #include "libsbp/imu.h"
@@ -121,18 +122,16 @@ s8 runner_sbp_process_payload(sbp_state_t *s, u16 sender_id, u16 msg_type, u8 ms
         //OdometryCallback(sender_id, msg_len, payload, pose);
         sbp_send_message(s, msg_type, sender_id, msg_len, payload, &file_write);
         break;
-    case SBP_MSG_GPS_TIME: //0x0209: MSG_POS_ECEF
+    case SBP_MSG_OBS: //0x0209: MSG_POS_ECEF
         {
-        gps_time_time = (msg_gps_time_t*) payload;
-        if (gps_time_time->flags != 0) {
-          uint32_t rounded_tow = gps_time_time->tow +  gps_time_time->ns_residual/1000000.0;
-          if (rounded_tow % 1000 == 0)
-          {
-          if(DEBUG) printf("curent GPS TOW is is %u\n", rounded_tow);
-          current_tow_s = rounded_tow;
-
-          }
-        ; 
+        uint32_t tow_obs = (uint32_t) payload[0];
+        tow_obs |= (uint32_t) payload[1] << 8;
+        tow_obs |= (uint32_t) payload[2] << 16;
+        tow_obs |= (uint32_t) payload[3] << 24;
+        if (tow_obs % 1000 == 0)
+        {
+        if(DEBUG) printf("curent GPS TOW from obs is %u\n", tow_obs);
+        current_tow_s = tow_obs;
         }
         }// intentionally fall through
     default:
