@@ -3,8 +3,8 @@
 #include <string.h>
 #include "imu_rectify.h"
 
-#define APP_NAME "smoothpose_runner"
-#define APP_VERSION "0.1"
+#define APP_NAME "imu_rectify"
+#define APP_VERSION "0.2"
 
 static void Usage(void)
 {
@@ -28,7 +28,7 @@ int main(int argc, char* argv[]) {
 
     if (argc < 2)
             {
-        printf("  Runs Swift Binary Protocol log file(s) through Smoothpose.\n");
+        printf("  unwrap / rectifity relative to PPS imu or wheeltick timestamps in Swift Binary Protocol log file(s).\n");
         printf("ERROR: not enough parameters.\n\n");
         Usage();
         exit(1);
